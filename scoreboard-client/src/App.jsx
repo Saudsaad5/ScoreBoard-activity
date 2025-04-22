@@ -3,7 +3,7 @@ import './App.css';
 import GameCard from './components/GameCard';
 
 function App() {
-  const [gameData, setGameData] = useState(null);
+  const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,7 +15,7 @@ function App() {
           throw new Error('Failed to fetch game data');
         }
         const data = await response.json();
-        setGameData(data);
+        setGames(data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -24,10 +24,7 @@ function App() {
     };
 
     fetchGameData();
-
-    // Set up polling every 3 seconds
     const interval = setInterval(fetchGameData, 3000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -39,8 +36,10 @@ function App() {
       <header className="app-header">
         <h1>NBA Live Scoreboard</h1>
       </header>
-      <main>
-        {gameData && <GameCard game={gameData} />}
+      <main className="games-container">
+        {games.map(game => (
+          <GameCard key={game.id} game={game} />
+        ))}
       </main>
     </div>
   );
